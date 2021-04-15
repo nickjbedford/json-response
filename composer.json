@@ -1,0 +1,34 @@
+{
+	"name": "nickjbedford/json-response",
+	"description": "Defines a uniform JSON response structure for PHP 7.4+ applications.",
+	"minimum-stability": "stable",
+	"type": "library",
+    "keywords": [
+		"json", "api", "rest"
+	],
+    "homepage": "https://github.com/nickjbedford/json-response",
+    "license": "MIT",
+	"authors": [
+		{
+			"name": "Nick Bedford",
+			"email": "email@nickbedford.com",
+            "homepage": "https://github.com/nickjbedford",
+            "role": "Developer"
+		}
+	],
+    "autoload": {
+        "psr-4": {
+            "YetAnother\\": "src/"
+        },
+        "files": [
+			"src/helpers.php"
+        ]
+    },
+	"require": {
+		"php": ">=7.4",
+		"ext-json": "*"
+	},
+	"require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
