@@ -108,3 +108,46 @@ The response will contain the following data including the exception debug data:
     }
 }
 ```
+
+## Record Sets
+
+To create a standardised response for record set responses with paging information,
+use the `\YetAnother\JsonResponse::recordSet()` method or `json_records()` function.
+
+### Example
+
+```php
+$records = [ 10, 20, 30, 40, 50 ];
+
+$response = json_records($records, 2, 5, 30, 'Integer');
+
+$json = $response->toJSON();
+```
+
+The response will contain the following data including the exception debug data:
+
+```json
+{
+    "success": true,
+    "error": null,
+    "data": {
+        "records": [ 10, 20, 30, 40, 50 ],
+        "page": 2,
+        "pageLength": 5,
+        "total": 30,
+        "nextPage": 3,
+        "previousPage": 1,
+        "recordType": "Integer"
+    }
+}
+```
+
+| Field | Type | Description |
+|-------------|------|-------------|
+| `data.records` | array | An array containing the page's records. |
+| `data.page` | int | The zero-based page index for the current record set. |
+| `data.pageLength` | int | The length of each page in the query. |
+| `data.total` | int | The total number of records in the query. |
+| `data.nextPage` | int or `null` | The next page's index if there are more records, otherwise `null`. |
+| `data.previousPage` | int or `null` | The previous page's index if the current page index is non-zero, otherwise `null`. |
+| `data.recordType` | string or `null` | An optionally provided name of the type of records in the record set. This is defined by the API using the library. |
