@@ -109,6 +109,16 @@ The response will contain the following data including the exception debug data:
 }
 ```
 
+If debugging data is included in the exception response, the `error.data`
+property will be structured as follows:
+
+| Field | Type | Description |
+|-------------|------|-------------|
+| `error.data.class` | string | The PHP class name of the exception throw. |
+| `error.data.file` | string | The name of the PHP script where the exception occurred. |
+| `error.data.file` | int | The line number in the PHP script where the exception occurred. |
+| `error.data.trace` | string | The stack trace formatted as a string. |
+
 ## Record Sets
 
 To create a standardised response for record set responses with paging information,
@@ -124,7 +134,7 @@ $response = json_records($records, 2, 5, 30, 'Integer');
 $json = $response->toJSON();
 ```
 
-The response will contain the following data including the exception debug data:
+The response will contain the following data:
 
 ```json
 {
