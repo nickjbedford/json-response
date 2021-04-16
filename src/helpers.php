@@ -44,3 +44,27 @@
 			return JsonResponse::exception($exception, $includeDebugData);
 		}
 	}
+	
+	if (!function_exists('json_records'))
+	{
+		/**
+		 * Creates a JSON response indicating success for a paged set of records.
+		 * @param array $records The records in the current page.
+		 * @param int $page The page index.
+		 * @param int|null $pageLength The length of each page in the query,
+		 * otherwise the number of records in the current page.
+		 * @param int|null $totalRecords The total number of records in the query,
+		 * otherwise the number of records in the current page.
+		 * @param string|null $recordType Optionally specifies the type of records in the set.
+		 * @return JsonResponse
+		 */
+		function json_records(
+			array $records,
+			int $page = 0,
+			?int $pageLength = null,
+			?int $totalRecords = null,
+			?string $recordType = null): JsonResponse
+		{
+			return JsonResponse::recordSet($records, $page, $pageLength, $totalRecords, $recordType);
+		}
+	}

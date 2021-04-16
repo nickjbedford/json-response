@@ -14,13 +14,13 @@
 		public static bool $debug = false;
 		
 		/** @var bool Specifies whether the request succeeded or failed. */
-		public bool $success = true;
+		public bool $success;
 		
-		/** @var array $data Specifies the data payload. This is expected to be a valid object or array. */
-		public array $data = [];
+		/** @var mixed|null $data Specifies the data payload. */
+		public $data;
 		
 		/** @var JsonResponseError|null Specifies the information about an error. */
-		public ?JsonResponseError $error = null;
+		public ?JsonResponseError $error;
 		
 		/**
 		 * Specifies whether debug mode is enabled for exception responses.
@@ -34,10 +34,10 @@
 		/**
 		 * Initialises a new JSON response.
 		 * @param bool $success Whether or not the response succeeded.
-		 * @param array $data The data payload.
+		 * @param mixed|null $data The data payload.
 		 * @param JsonResponseError|null $error Information about an error if the request failed.
 		 */
-		public function __construct(bool $success = true, array $data = [], ?JsonResponseError $error = null)
+		public function __construct(bool $success = true, $data = null, ?JsonResponseError $error = null)
 		{
 			$this->success = $success;
 			$this->data = $data;
@@ -46,12 +46,33 @@
 		
 		/**
 		 * Creates a JSON response indicating success with an optional data payload.
-		 * @param array $data The data payload if applicable.
+		 * @param mixed|null $data The data payload if applicable.
 		 * @return static
 		 */
-		public static function success(array $data = []): self
+		public static function success($data = null): self
 		{
 			return new self(true, $data);
+		}
+		
+		/**
+		 * Creates a JSON response indicating success for a paged set of records.
+		 * @param array $records The records in the current page.
+		 * @param int $page The page index.
+		 * @param int|null $pageLength The length of each page in the query,
+		 * otherwise the number of records in the current page.
+		 * @param int|null $totalRecords The total number of records in the query,
+		 * otherwise the number of records in the current page.
+		 * @param string|null $recordType Optionally specifies the type of records in the set.
+		 * @return static
+		 */
+		public static function recordSet(
+			array $records,
+			int $page = 0,
+			?int $pageLength = null,
+			?int $totalRecords = null,
+			?string $recordType = null): self
+		{
+			return self::success(new JsonRecordSet($records, $page, $pageLength, $totalRecords, $recordType));
 		}
 		
 		/**
@@ -63,7 +84,7 @@
 		 */
 		public static function failure(string $errorMessage, ?string $errorCode = null, array $errorData = []): self
 		{
-			return new self(false, [], new JsonResponseError($errorMessage, $errorCode, $errorData));
+			return new self(false, null, new JsonResponseError($errorMessage, $errorCode, $errorData));
 		}
 		
 		/**
@@ -76,16 +97,17 @@
 		 */
 		public static function exception(Throwable $exception, ?bool $includeDebugData = null): self
 		{
-			return new self(false, [], JsonResponseError::fromException($exception, $includeDebugData ?? self::$debug));
+			return new self(false, null, JsonResponseError::fromException($exception, $includeDebugData ?? self::$debug));
 		}
 		
 		/**
-		 * @param bool|null $forceObjects
+		 * Converts the response to a JSON encoded string.
+		 * @param bool|null $forceObject
 		 * @return string
 		 */
-		public function toJSON(?bool $forceObjects = null): string
+		public function toJSON(?bool $forceObject = null): string
 		{
-			return json_encode($this, $forceObjects ? JSON_FORCE_OBJECT : 0);
+			return json_encode($this, $forceObject ? JSON_FORCE_OBJECT : 0);
 		}
 		
 		/**

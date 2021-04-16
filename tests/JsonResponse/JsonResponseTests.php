@@ -15,7 +15,7 @@
 		
 		function testSuccessWithPayloadContainsDataAndHasNoError()
 		{
-			$response = JsonResponse::success([
+			$response = json_success([
 				'hello' => 'world'
 			]);
 			
@@ -27,7 +27,7 @@
 		
 		function testSuccessWithPayloadIsEncodedProperly()
 		{
-			$response = JsonResponse::success([
+			$response = json_success([
 				'hello' => 'world',
 				'array' => [
 					10, 'Text'
@@ -49,7 +49,7 @@
 		{
 			$exception = new InvalidArgumentException('An argument provided was invalid.', 10);
 			
-			$response = JsonResponse::exception($exception);
+			$response = json_exception($exception);
 			
 			$this->assertFalse($response->success);
 			$this->assertEmpty($response->data);
@@ -64,7 +64,7 @@
 			$exception = new InvalidArgumentException('An argument provided was invalid.', 10);
 			JsonResponse::setDebug();
 			
-			$response = JsonResponse::exception($exception);
+			$response = json_exception($exception);
 			
 			$this->assertFalse($response->success);
 			$this->assertEmpty($response->data);
