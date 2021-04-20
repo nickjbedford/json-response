@@ -19,10 +19,7 @@
     "autoload": {
         "psr-4": {
             "YetAnother\\": "src/"
-        },
-        "files": [
-			"src/helpers.php"
-        ]
+        }
     },
 	"require": {
 		"php": ">=7.4",

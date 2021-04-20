@@ -51,7 +51,7 @@
 		 */
 		public static function success($data = null): self
 		{
-			return new self(true, $data);
+			return new static(true, $data);
 		}
 		
 		/**
@@ -84,7 +84,7 @@
 		 */
 		public static function failure(string $errorMessage, ?string $errorCode = null, array $errorData = []): self
 		{
-			return new self(false, null, new JsonResponseError($errorMessage, $errorCode, $errorData));
+			return new static(false, null, new JsonResponseError($errorMessage, $errorCode, $errorData));
 		}
 		
 		/**
@@ -97,7 +97,7 @@
 		 */
 		public static function exception(Throwable $exception, ?bool $includeDebugData = null): self
 		{
-			return new self(false, null, JsonResponseError::fromException($exception, $includeDebugData ?? self::$debug));
+			return new static(false, null, JsonResponseError::fromException($exception, $includeDebugData ?? self::$debug));
 		}
 		
 		/**
@@ -117,5 +117,37 @@
 		public function __toString()
 		{
 			return $this->toJSON();
+		}
+		
+		/**
+		 * Converts a object to an array recursively.
+		 * @param array|object|mixed $value
+		 * @return array
+		 */
+		private static function toArrayRecursive($value): array
+		{
+			$result = is_object($value) ? get_object_vars($value) : $value;
+			if (!is_array($result))
+				return $result;
+			
+			foreach($result as &$value)
+			{
+				if (is_object($value))
+					$value = self::toArrayRecursive($value);
+				
+				if (is_array($value))
+					$value = self::toArrayRecursive($value);
+			}
+			return $result;
+		}
+		
+		/**
+		 * Converts the response to an array.
+		 * @return array
+		 * @noinspection PhpUnused
+		 */
+		public function toArray(): array
+		{
+			return self::toArrayRecursive($this);
 		}
 	}
