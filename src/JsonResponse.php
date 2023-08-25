@@ -23,6 +23,18 @@
 		public ?JsonResponseError $error;
 		
 		/**
+		 * Creates a JSON response from an array of the same properties.
+		 * @param array $values An array of the same properties as this class.
+		 * @return self
+		 */
+		public static function from(array $values): self
+		{
+			if ($error = $values['error'] ?? null)
+				$error = new JsonResponseError($error['message'] ?? null, $error['code'] ?? null, $error['data'] ?? []);
+			return new static($values['success'] ?? false, $values['data'] ?? null, $error);
+		}
+		
+		/**
 		 * Specifies whether debug mode is enabled for exception responses.
 		 * @param bool $debug
 		 */
